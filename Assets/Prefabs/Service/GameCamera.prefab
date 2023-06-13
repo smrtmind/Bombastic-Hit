@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6163919763298063912}
   - component: {fileID: 6163919763298063919}
   - component: {fileID: 6163919763298063918}
-  - component: {fileID: 7373084037019711354}
+  - component: {fileID: 5566406912429156203}
   - component: {fileID: 604676005}
   - component: {fileID: -5702800225854060470}
   m_Layer: 0
@@ -31,6 +31,7 @@ Transform:
   m_LocalRotation: {x: 0.012993435, y: 0.72727525, z: -0.020130819, w: 0.6859277}
   m_LocalPosition: {x: -2.52, y: 1.76, z: 2.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -86,7 +87,7 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6163919763298063917}
   m_Enabled: 1
---- !u!114 &7373084037019711354
+--- !u!114 &5566406912429156203
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

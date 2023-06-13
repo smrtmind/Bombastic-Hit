@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2967dc4f2ade784995286ee5dec7387, type: 3}
   m_Name: PlayerStorage
   m_EditorClassIdentifier: 
-  <Score>k__BackingField: 375
+  <Score>k__BackingField: 405
   <MaxShootingPower>k__BackingField: 100
-  <CurrentShootingPower>k__BackingField: 100
-  <SpawnEnemies>k__BackingField: 1
+  <CurrentShootingPower>k__BackingField: 21.971272
+  <SpawnEnemies>k__BackingField: 0
   <ScoreOnKill>k__BackingField: 25
   <ScorePenalty>k__BackingField: 10

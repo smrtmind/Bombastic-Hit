@@ -16,5 +16,12 @@ namespace Codebase.Utils
             WallDamage,
             PopUp
         }
+
+        public enum ColorType
+        {
+            Red,
+            Green,
+            Blue
+        }
     }
 }

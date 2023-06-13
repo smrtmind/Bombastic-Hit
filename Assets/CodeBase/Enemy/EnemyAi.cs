@@ -17,13 +17,16 @@ namespace CodeBase.Enemy
         #region Variables
         [Header("Storages")]
         [SerializeField] private PlayerStorage playerStorage;
+        [SerializeField] private MaterialStorage materialStorage;
 
-        [Header("Enemy Settings")]
+        [field: Header("Enemy Settings")]
+        [field: SerializeField] public ColorType CurrentColor { get; private set; }
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private float checkDistance;
         [SerializeField] private float sphereCastRadius = 1f;
         [SerializeField] private LayerMask collisionLayer;
         [SerializeField] private float timerToRespawn;
+        [SerializeField] private MeshRenderer[] clothMeshes;
 
         [Header("Enemy Parts")]
         [SerializeField] private GameObject body;
@@ -48,12 +51,24 @@ namespace CodeBase.Enemy
 
         private void OnEnable()
         {
+            InitRandomColor();
+
             UserInterface.OnEnemyTogglePressed += ReleaseImmidiate;
         }
 
         private void OnDisable()
         {
             UserInterface.OnEnemyTogglePressed -= ReleaseImmidiate;
+        }
+
+        private void InitRandomColor()
+        {
+            ColorData randomColorData = materialStorage.GetRandomColorData();
+
+            CurrentColor = randomColorData.Type;
+
+            foreach (var mesh in clothMeshes)
+                mesh.material = randomColorData.Material;
         }
 
         private void Update()

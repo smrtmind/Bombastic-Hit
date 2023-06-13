@@ -9,6 +9,12 @@ namespace CodeBase.ObjectBased
 {
     public class CannonBall : ResourceUnit, IAmThrowable
     {
+        #region variables
+        [Header("Storages")]
+        [SerializeField] private MaterialStorage materialStorage;
+
+        [field: Space]
+        [field: SerializeField] public ColorType CurrentColor { get; private set; }
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private int numVertices = 10;
@@ -19,6 +25,7 @@ namespace CodeBase.ObjectBased
 
         private Coroutine lifeSpanRoutine;
         private ParticlePool particlePool;
+        #endregion
 
         [Inject]
         private void Construct(ParticlePool pPool)
@@ -28,12 +35,22 @@ namespace CodeBase.ObjectBased
 
         private void OnEnable()
         {
+            InitRandomColor();
+
             PhysicsObject.OnReachedMaxRicochets += Release;
         }
 
         private void OnDisable()
         {
             PhysicsObject.OnReachedMaxRicochets -= Release;
+        }
+
+        private void InitRandomColor()
+        {
+            ColorData randomColorData = materialStorage.GetRandomColorData();
+
+            meshRenderer.material = randomColorData.Material;
+            CurrentColor = randomColorData.Type;
         }
 
         public override void Take()

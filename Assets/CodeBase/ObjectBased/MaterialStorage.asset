@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af816cd000d8dc74789e9fa4c8f18b23, type: 3}
+  m_Name: MaterialStorage
+  m_EditorClassIdentifier: 
+  colorDatas:
+  - <Type>k__BackingField: 0
+    <Material>k__BackingField: {fileID: 2100000, guid: 0bd0179c85d014e4483ac75a3f492ed9, type: 2}
+  - <Type>k__BackingField: 1
+    <Material>k__BackingField: {fileID: 2100000, guid: 3fd87595cfba81e42854d845792c9d4c, type: 2}
+  - <Type>k__BackingField: 2
+    <Material>k__BackingField: {fileID: 2100000, guid: 2cd14309a58562845a3607341ef0fb7f, type: 2}
