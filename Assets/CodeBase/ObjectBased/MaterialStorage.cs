@@ -10,7 +10,19 @@ namespace CodeBase.ObjectBased
     {
         [SerializeField] private ColorData[] colorDatas;
 
-        public ColorData GetRandomColorData() => colorDatas[Random.Range(0, colorDatas.Length)];
+        public ColorData GetColorData(ColorType type)
+        {
+            if (type == ColorType.Random)
+                return colorDatas[Random.Range(0, colorDatas.Length)];
+
+            foreach (var colorData in colorDatas)
+            {
+                if (colorData.Type == type)
+                    return colorData;
+            }
+
+            return null;
+        }
     }
 
     [Serializable]

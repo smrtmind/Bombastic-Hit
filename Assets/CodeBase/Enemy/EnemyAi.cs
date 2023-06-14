@@ -3,6 +3,7 @@ using CodeBase.ObjectBased;
 using CodeBase.Player;
 using CodeBase.Service;
 using CodeBase.UI;
+using CodeBase.Utils;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -23,10 +24,10 @@ namespace CodeBase.Enemy
         [field: SerializeField] public ColorType CurrentColor { get; private set; }
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private float checkDistance;
-        [SerializeField] private float sphereCastRadius = 1f;
         [SerializeField] private LayerMask collisionLayer;
         [SerializeField] private float timerToRespawn;
         [SerializeField] private MeshRenderer[] clothMeshes;
+        [SerializeField] private Collider mainCollider;
 
         [Header("Enemy Parts")]
         [SerializeField] private GameObject body;
@@ -38,7 +39,6 @@ namespace CodeBase.Enemy
         private Vector3 playerPosition;
         private ParticlePool particlePool;
         private ResourcePool resourcePool;
-        private bool isDead;
         #endregion
 
         [Inject]
@@ -63,7 +63,7 @@ namespace CodeBase.Enemy
 
         private void InitRandomColor()
         {
-            ColorData randomColorData = materialStorage.GetRandomColorData();
+            ColorData randomColorData = materialStorage.GetColorData(ColorType.Random);
 
             CurrentColor = randomColorData.Type;
 
@@ -71,23 +71,20 @@ namespace CodeBase.Enemy
                 mesh.material = randomColorData.Material;
         }
 
-        private void Update()
+        private void OnCollisionEnter(Collision collision)
         {
-            if (!isDead)
+            if (collision.gameObject.tag.Equals(Tags.Weapon))
             {
-                if (Physics.CheckSphere(transform.position, sphereCastRadius, collisionLayer))
-                {
-                    particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.EnemyDead);
-                    playerStorage.ModifyScore(playerStorage.ScoreOnKill);
-                    UserInterface.OnScoreChanged?.Invoke();
-                    Die();
-                }
+                particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.EnemyDead);
+                playerStorage.ModifyScore(playerStorage.ScoreOnKill);
+                UserInterface.OnScoreChanged?.Invoke();
+                Die();
             }
         }
 
         private void Die()
         {
-            isDead = true;
+            mainCollider.enabled = false;
             agent.enabled = false;
 
             if (playerFollowRoutine != null)
@@ -100,7 +97,7 @@ namespace CodeBase.Enemy
             body.SetActive(false);
 
             foreach (var droppable in droppableObjects)
-                droppable.physicsObject.enabled = true;
+                droppable.Rb.isKinematic = false;
 
             StartCoroutine(StartTimerBeforeRespawn());
         }
@@ -117,12 +114,12 @@ namespace CodeBase.Enemy
 
             foreach (var droppable in droppableObjects)
             {
-                droppable.physicsObject.enabled = false;
-                droppable.physicsObject.transform.position = droppable.parentPoint.position;
-                droppable.physicsObject.transform.rotation = droppable.parentPoint.rotation;
+                droppable.Rb.isKinematic = true;
+                droppable.Rb.transform.position = droppable.ParentPoint.position;
+                droppable.Rb.transform.rotation = droppable.ParentPoint.rotation;
             }
 
-            isDead = false;
+            mainCollider.enabled = true;
             agent.enabled = true;
             Release();
         }
@@ -180,8 +177,8 @@ namespace CodeBase.Enemy
         [Serializable]
         public class DroppableObject
         {
-            [field: SerializeField] public Transform parentPoint;
-            [field: SerializeField] public PhysicsObject physicsObject;
+            [field: SerializeField] public Transform ParentPoint { get; private set; }
+            [field: SerializeField] public Rigidbody Rb { get; private set; }
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Codebase.Utils
 
         public enum ColorType
         {
+            Random,
             Red,
             Green,
             Blue

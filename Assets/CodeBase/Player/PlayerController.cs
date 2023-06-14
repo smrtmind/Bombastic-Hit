@@ -1,5 +1,5 @@
-﻿using CodeBase.Service;
-using CodeBase.Utils;
+﻿using CodeBase.ObjectBased;
+using CodeBase.Service;
 using System.Collections;
 using UnityEngine;
 using Zenject;
@@ -74,14 +74,14 @@ namespace CodeBase.Player
                 StartCoroutine(ShotAnimation());
 
                 cannonBurst.Play();
-                CameraShaker.OnShakeCamera?.Invoke();
+                //CameraShaker.OnShakeCamera?.Invoke();
 
                 var newCannonBall = resourcePool.GetFreeResource(ResourceType.Ammo);
-                if (newCannonBall != null && newCannonBall is IAmThrowable ammo)
+                if (newCannonBall != null && newCannonBall is CannonBall ball)
                 {
-                    newCannonBall.transform.position = ShotPoint.position;
-                    newCannonBall.Take();
-                    ammo.Throw(ShotPoint.transform.up * playerStorage.CurrentShootingPower);
+                    ball.transform.position = ShotPoint.position;
+                    ball.Take();
+                    ball.Throw(ShotPoint.transform.up * playerStorage.CurrentShootingPower);
                 }
             }
         }

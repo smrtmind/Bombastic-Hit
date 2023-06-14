@@ -1,4 +1,5 @@
 using CodeBase.Effects;
+using CodeBase.Service;
 using CodeBase.Utils;
 using System.Collections;
 using UnityEngine;
@@ -7,7 +8,7 @@ using static Codebase.Utils.Enums;
 
 namespace CodeBase.ObjectBased
 {
-    public class CannonBall : ResourceUnit, IAmThrowable
+    public class CannonBall : ResourceUnit
     {
         #region variables
         [Header("Storages")]
@@ -21,34 +22,34 @@ namespace CodeBase.ObjectBased
         [SerializeField] private float minRange = -5f;
         [SerializeField] private float maxRange = 5f;
         [SerializeField] private float lifeSpan;
-        [field: SerializeField] public PhysicsObject PhysicsObject { get; private set; }
+        [SerializeField] private int maxRicochets = 3;
+        [field: SerializeField] public Rigidbody Rb { get; private set; }
 
         private Coroutine lifeSpanRoutine;
         private ParticlePool particlePool;
+        private int ricochetCounter;
+        private ResourcePool resourcePool;
         #endregion
 
         [Inject]
-        private void Construct(ParticlePool pPool)
+        private void Construct(ParticlePool pPool, ResourcePool rPool)
         {
             particlePool = pPool;
+            resourcePool = rPool;
         }
 
         private void OnEnable()
         {
-            InitRandomColor();
-
-            PhysicsObject.OnReachedMaxRicochets += Release;
+            ricochetCounter = 0;
+            InitBallOnBecomeActive();
         }
 
-        private void OnDisable()
+        private void InitBallOnBecomeActive()
         {
-            PhysicsObject.OnReachedMaxRicochets -= Release;
-        }
+            Rb.velocity = Vector3.zero;
+            Rb.angularVelocity = Vector3.zero;
 
-        private void InitRandomColor()
-        {
-            ColorData randomColorData = materialStorage.GetRandomColorData();
-
+            ColorData randomColorData = materialStorage.GetColorData(ColorType.Random);
             meshRenderer.material = randomColorData.Material;
             CurrentColor = randomColorData.Type;
         }
@@ -136,6 +137,43 @@ namespace CodeBase.ObjectBased
             Release();
         }
 
-        public void Throw(Vector3 force) => PhysicsObject.AddForce(force);
+        public void Throw(Vector3 force) => Rb.AddForce(Rb.velocity += force / Rb.mass);
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.tag.Equals(Tags.Enemy))
+            {
+                Release();
+            }
+            else
+            {
+                ricochetCounter++;
+                ContactPoint contact = collision.contacts[0];
+
+                if (ricochetCounter == maxRicochets)
+                {
+                    SpawnMark(contact.point, contact.normal, ResourceType.WallDamage);
+                    Release();
+                }
+                else
+                {
+                    SpawnMark(contact.point, contact.normal, ResourceType.WallCrack);
+                }
+            }
+        }
+
+        private void SpawnMark(Vector3 position, Vector3 normal, ResourceType markType)
+        {
+            var newMark = resourcePool.GetFreeResource(markType);
+            if (newMark != null)
+            {
+                newMark.Take();
+                newMark.transform.position = position;
+                newMark.transform.rotation = Quaternion.LookRotation(normal);
+
+                float randomScale = Random.Range(0.5f, 1f);
+                newMark.transform.localScale = new Vector3(randomScale, randomScale, 1f);
+            }
+        }
     }
 }
