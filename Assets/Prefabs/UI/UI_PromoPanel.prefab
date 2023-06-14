@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 1271479116918062525}
   - component: {fileID: 1271479116918062527}
   - component: {fileID: 1271479116918062526}
+  - component: {fileID: 5192304922184482729}
   m_Layer: 5
   m_Name: Filler
   m_TagString: Untagged
@@ -97,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9811321, g: 0.35542893, b: 0.35542893, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -114,6 +115,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1.35
+--- !u!114 &5192304922184482729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1271479116918062524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd159eab3790c7348a368ab3d1d75917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color1: {r: 1, g: 0.8751433, b: 0, a: 1}
+  color2: {r: 1, g: 0.3302029, b: 0, a: 1}
+  angle: -90
+  ignoreRatio: 1
 --- !u!1 &1271479117385854606
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,6 +198,7 @@ GameObject:
   - component: {fileID: 1271479117469107367}
   - component: {fileID: 1271479117469107361}
   - component: {fileID: 1271479117469107360}
+  - component: {fileID: 4431167272110770638}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -229,7 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.74267626, g: 0.8584906, b: 0.3514952, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -246,6 +264,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4431167272110770638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1271479117469107366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd159eab3790c7348a368ab3d1d75917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color1: {r: 0.9579072, g: 0, b: 1, a: 1}
+  color2: {r: 0, g: 0.47805572, b: 1, a: 1}
+  angle: 0
+  ignoreRatio: 1
 --- !u!1 &1271479117540539039
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,8 +478,8 @@ MonoBehaviour:
 
     Hit'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0f8434d8b9392e843bceb3d6f84a9c13, type: 2}
+  m_sharedMaterial: {fileID: 8874778907992275809, guid: 0f8434d8b9392e843bceb3d6f84a9c13, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -475,7 +509,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
