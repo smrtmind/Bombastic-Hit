@@ -1,6 +1,6 @@
 ﻿using CodeBase.ObjectBased;
 using CodeBase.Service;
-using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using Zenject;
 using static Codebase.Utils.Enums;
@@ -19,19 +19,14 @@ namespace CodeBase.Player
         [SerializeField] private ParticleSystem cannonBurst;
 
         private bool readyToShoot = true;
-        private Vector3 defaultCannonPosition;
         private ResourcePool resourcePool;
+        private Tween cannonAnimationTween;
         #endregion
 
         [Inject]
         private void Construct(ResourcePool rPool)
         {
             resourcePool = rPool;
-        }
-
-        private void Start()
-        {
-            defaultCannonPosition = cannon.localPosition;
         }
 
         private void Update()
@@ -59,7 +54,10 @@ namespace CodeBase.Player
             if (readyToShoot)
             {
                 readyToShoot = false;
-                StartCoroutine(ShotAnimation());
+
+                cannonAnimationTween?.Kill();
+                cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), 0.4f)
+                    .OnComplete(() => readyToShoot = true);
 
                 cannonBurst.Play();
                 //CameraShaker.OnShakeCamera?.Invoke();
@@ -71,25 +69,6 @@ namespace CodeBase.Player
                     ball.Take();
                     ball.Throw(ShotPoint.transform.up * playerStorage.PlayerData.ShootingPower);
                 }
-            }
-        }
-
-        private IEnumerator ShotAnimation()
-        {
-            yield return StartCoroutine(CannonAnimation());
-            readyToShoot = true;
-        }
-
-        private IEnumerator CannonAnimation()
-        {
-            while (cannon.localPosition.x > -2f)
-            {
-                yield return cannon.localPosition -= new Vector3(Time.deltaTime * 8f, 0f, 0f);
-            }
-
-            while (cannon.localPosition.x < defaultCannonPosition.x)
-            {
-                yield return cannon.localPosition += new Vector3(Time.deltaTime * 8f, 0f, 0f);
             }
         }
     }
