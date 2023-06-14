@@ -58,6 +58,9 @@ MonoBehaviour:
   maxRange: 0.75
   lifeSpan: 5
   maxRicochets: 3
+  vertexCount: 300
+  radius: 0.75
+  randomness: 2
   <Rb>k__BackingField: {fileID: 7934645305164344760}
 --- !u!23 &4259134294404024456
 MeshRenderer:

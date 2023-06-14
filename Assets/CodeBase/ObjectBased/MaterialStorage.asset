@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: MaterialStorage
   m_EditorClassIdentifier: 
   colorDatas:
-  - <Type>k__BackingField: 0
-    <Material>k__BackingField: {fileID: 2100000, guid: 0bd0179c85d014e4483ac75a3f492ed9, type: 2}
   - <Type>k__BackingField: 1
-    <Material>k__BackingField: {fileID: 2100000, guid: 3fd87595cfba81e42854d845792c9d4c, type: 2}
+    <Material>k__BackingField: {fileID: 2100000, guid: 0bd0179c85d014e4483ac75a3f492ed9, type: 2}
   - <Type>k__BackingField: 2
+    <Material>k__BackingField: {fileID: 2100000, guid: 3fd87595cfba81e42854d845792c9d4c, type: 2}
+  - <Type>k__BackingField: 3
     <Material>k__BackingField: {fileID: 2100000, guid: 2cd14309a58562845a3607341ef0fb7f, type: 2}

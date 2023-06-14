@@ -1,5 +1,6 @@
 using CodeBase.Enemy;
 using CodeBase.Player;
+using CodeBase.Service;
 using CodeBase.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,8 +15,6 @@ namespace CodeBase.ObjectBased
         [SerializeField] private PlayerStorage playerStorage;
 
         [Header("Factory Settings")]
-        [SerializeField] private Transform[] enemySpawnPoints;
-        [SerializeField] private int enemiesOnStart;
         [SerializeField] private float spawnDelay;
         [SerializeField] private EnemyAi enemyPrefab;
         [SerializeField] private Transform enemyContainer;
@@ -24,49 +23,44 @@ namespace CodeBase.ObjectBased
 
         private List<EnemyAi> enemyPool = new List<EnemyAi>();
         private Coroutine enemySpawnRoutine;
+        private List<Transform> spawnPoints = new List<Transform>();
+        private LocationController locationController;
+
+        [Inject]
+        private void Construct(LocationController lController)
+        {
+            locationController = lController;
+        }
 
         private void OnEnable()
         {
-            UserInterface.OnEnemyTogglePressed += StartSpawner;
+            GameManager.LevelStartAction += StartSpawner;
+            GamePanelController.OnLevelChanged += StartSpawner;
         }
 
         private void OnDisable()
         {
-            UserInterface.OnEnemyTogglePressed -= StartSpawner;
+            GameManager.LevelStartAction -= StartSpawner;
+            GamePanelController.OnLevelChanged -= StartSpawner;
         }
 
-        private void Start()
+        private void StartSpawner()
         {
-            if (playerStorage.SpawnEnemies)
-            {
-                BurstSpawn();
-                StartSpawner();
-            }
-        }
+            if (enemySpawnRoutine != null)
+                StopCoroutine(enemySpawnRoutine);
 
-        private void BurstSpawn()
-        {
-            if (enemiesOnStart > 0)
-                for (int i = 0; i < enemiesOnStart - 1; i++)
-                    SpawnNewEnemy();
-        }
+            spawnPoints.Clear();
+            spawnPoints = locationController.GetCurrentSpawnPoints();
 
-        private void StartSpawner() => enemySpawnRoutine = StartCoroutine(SpawnEnemies());
+            enemySpawnRoutine = StartCoroutine(SpawnEnemies());
+        }
 
         private IEnumerator SpawnEnemies()
         {
-            if (playerStorage.SpawnEnemies)
+            while (true)
             {
-                while (true)
-                {
-                    SpawnNewEnemy();
-                    yield return new WaitForSeconds(spawnDelay);
-                }
-            }
-            else
-            {
-                if (enemySpawnRoutine != null)
-                    StopCoroutine(enemySpawnRoutine);
+                SpawnNewEnemy();
+                yield return new WaitForSeconds(spawnDelay);
             }
         }
 
@@ -75,7 +69,7 @@ namespace CodeBase.ObjectBased
             EnemyAi newEnemy = GetFreeEnemy();
             if (newEnemy != null)
             {
-                newEnemy.transform.position = enemySpawnPoints[Random.Range(0, enemySpawnPoints.Length)].transform.position;
+                newEnemy.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
                 newEnemy.Take();
             }
         }

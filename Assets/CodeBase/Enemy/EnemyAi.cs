@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using Zenject;
 using static Codebase.Utils.Enums;
 
@@ -28,6 +29,7 @@ namespace CodeBase.Enemy
         [SerializeField] private float timerToRespawn;
         [SerializeField] private MeshRenderer[] clothMeshes;
         [SerializeField] private Collider mainCollider;
+        [SerializeField] private Image markerCircle;
 
         [Header("Enemy Parts")]
         [SerializeField] private GameObject body;
@@ -53,12 +55,12 @@ namespace CodeBase.Enemy
         {
             InitRandomColor();
 
-            UserInterface.OnEnemyTogglePressed += ReleaseImmidiate;
+            LoadingScreen.OnLoadingScreenActive += ReleaseImmidiate;
         }
 
         private void OnDisable()
         {
-            UserInterface.OnEnemyTogglePressed -= ReleaseImmidiate;
+            LoadingScreen.OnLoadingScreenActive -= ReleaseImmidiate;
         }
 
         private void InitRandomColor()
@@ -69,6 +71,11 @@ namespace CodeBase.Enemy
 
             foreach (var mesh in clothMeshes)
                 mesh.material = randomColorData.Material;
+
+            if (ColorUtility.TryParseHtmlString(CurrentColor.ToString(), out Color color))
+                markerCircle.color = color;
+            else
+                markerCircle.color = Color.white;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -76,8 +83,8 @@ namespace CodeBase.Enemy
             if (collision.gameObject.tag.Equals(Tags.Weapon))
             {
                 particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.EnemyDead);
-                playerStorage.ModifyScore(playerStorage.ScoreOnKill);
-                UserInterface.OnScoreChanged?.Invoke();
+                playerStorage.PlayerData.ModifyScore();
+                playerStorage.PlayerData.ModifyEnemyAmount();
                 Die();
             }
         }
@@ -104,8 +111,7 @@ namespace CodeBase.Enemy
 
         private void ReleaseImmidiate()
         {
-            if (!playerStorage.SpawnEnemies)
-                Release();
+            Release();
         }
 
         private IEnumerator StartTimerBeforeRespawn()
@@ -153,8 +159,7 @@ namespace CodeBase.Enemy
 
                     if (Vector3.Distance(transform.position, playerPosition) <= checkDistance)
                     {
-                        playerStorage.ModifyScore(-playerStorage.ScorePenalty);
-                        UserInterface.OnScoreChanged?.Invoke();
+                        playerStorage.PlayerData.ModifyHealth();
                         DamageScreen.OnPlayerDamaged?.Invoke();
                         Release();
                         break;

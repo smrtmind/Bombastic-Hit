@@ -1,4 +1,5 @@
 using CodeBase.Effects;
+using CodeBase.ObjectBased;
 using CodeBase.Player;
 using CodeBase.Service;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class BaseInstaller : MonoInstaller
     [SerializeField] private ResourcePool ammoPool;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private CameraController cameraController;
+    [SerializeField] private LocationController locationController;
 
     public override void InstallBindings()
     {
@@ -17,6 +19,7 @@ public class BaseInstaller : MonoInstaller
         BindAmmoPool();
         BindPlayerController();
         BindCameraController();
+        BindLocationController();
     }
 
     private void BindParticlePool()
@@ -41,5 +44,11 @@ public class BaseInstaller : MonoInstaller
     {
         Container.Bind<CameraController>().FromInstance(cameraController).AsSingle().NonLazy();
         Container.QueueForInject(cameraController);
+    }
+
+    private void BindLocationController()
+    {
+        Container.Bind<LocationController>().FromInstance(locationController).AsSingle().NonLazy();
+        Container.QueueForInject(locationController);
     }
 }

@@ -15,11 +15,9 @@ namespace CodeBase.Player
 
         [Header("Cannon Settings")]
         [SerializeField] private Transform cannon;
-        [SerializeField] private float tapThreshold = 5f;
         [field: SerializeField] public Transform ShotPoint { get; private set; }
         [SerializeField] private ParticleSystem cannonBurst;
 
-        private Vector2 tapPosition;
         private bool readyToShoot = true;
         private Vector3 defaultCannonPosition;
         private ResourcePool resourcePool;
@@ -38,20 +36,10 @@ namespace CodeBase.Player
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                tapPosition = Input.mousePosition;
-                float distance = Vector2.Distance(tapPosition, Input.mousePosition);
-
-                if (distance > tapThreshold)
-                    return;
-
-                ShootCannonball();
-            }
-
             if (Input.GetMouseButton(0))
             {
                 MoveCannon();
+                ShootCannonball();
             }
         }
 
@@ -81,7 +69,7 @@ namespace CodeBase.Player
                 {
                     ball.transform.position = ShotPoint.position;
                     ball.Take();
-                    ball.Throw(ShotPoint.transform.up * playerStorage.CurrentShootingPower);
+                    ball.Throw(ShotPoint.transform.up * playerStorage.PlayerData.ShootingPower);
                 }
             }
         }

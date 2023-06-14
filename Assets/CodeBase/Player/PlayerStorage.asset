@@ -12,9 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2967dc4f2ade784995286ee5dec7387, type: 3}
   m_Name: PlayerStorage
   m_EditorClassIdentifier: 
-  <Score>k__BackingField: 405
-  <MaxShootingPower>k__BackingField: 100
-  <CurrentShootingPower>k__BackingField: 21.971272
-  <SpawnEnemies>k__BackingField: 0
-  <ScoreOnKill>k__BackingField: 25
-  <ScorePenalty>k__BackingField: 10
+  playerPrefsSaveString: _playerSave
+  playerDataStorage: {fileID: 11400000, guid: 9c95bfaf83d4ad74eb9c760a2ee6f088, type: 2}
+  playerData:
+    <Level>k__BackingField: 1
+    <Health>k__BackingField: 3
+    <Score>k__BackingField: 45
+    <ShootingPower>k__BackingField: 28
+    <TutorialCompleted>k__BackingField: 1
+    <CurrentTutorialStep>k__BackingField: 0
+    <ScoreOnKill>k__BackingField: 15
+    <ScorePenalty>k__BackingField: 5
+    <SpawnEnemies>k__BackingField: 1

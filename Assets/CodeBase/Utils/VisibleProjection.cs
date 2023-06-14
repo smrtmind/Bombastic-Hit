@@ -27,7 +27,7 @@ namespace CodeBase.Utils
 
             List<Vector3> points = new List<Vector3>();
             Vector3 startingPosition = cannonController.ShotPoint.position;
-            Vector3 startingVelocity = cannonController.ShotPoint.up * playerStorage.CurrentShootingPower;
+            Vector3 startingVelocity = cannonController.ShotPoint.up * playerStorage.PlayerData.ShootingPower;
 
             for (float t = 0; t < numPoints; t += timeBetweenPoints)
             {

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a292952b16f0a4245a35afb8e2ad20cf, type: 3}
+  m_Name: PlayerDataStorage
+  m_EditorClassIdentifier: 
+  <Level>k__BackingField: 1
+  <Health>k__BackingField: 3
+  <Score>k__BackingField: 0
+  <ShootingPower>k__BackingField: 28
+  <TutorialCompleted>k__BackingField: 1
+  <ScoreOnKill>k__BackingField: 15
+  <EnemyDamage>k__BackingField: 1
+  <BaseEnemyAmount>k__BackingField: 5
+  <EnemyAmountStepPerLevel>k__BackingField: 2

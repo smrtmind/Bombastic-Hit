@@ -50,7 +50,7 @@ namespace CodeBase.UI
 
         public void Spawn()
         {
-            ValueInfo.text = $"+{playerStorage.ScoreOnKill}";
+            ValueInfo.text = $"+{playerStorage.PlayerData.ScoreOnKill}";
 
             transform.localScale = new Vector3(0f, 0f, 1f);
 

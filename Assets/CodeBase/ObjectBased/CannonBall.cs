@@ -18,9 +18,9 @@ namespace CodeBase.ObjectBased
         [field: SerializeField] public ColorType CurrentColor { get; private set; }
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private MeshFilter meshFilter;
-        [SerializeField] private int numVertices = 10;
-        [SerializeField] private float minRange = -5f;
-        [SerializeField] private float maxRange = 5f;
+        [SerializeField] private int vertexCount = 300;
+        [SerializeField] private float radius = 1f;
+        [SerializeField] private float randomness = 2f;
         [SerializeField] private float lifeSpan;
         [SerializeField] private int maxRicochets = 3;
         [field: SerializeField] public Rigidbody Rb { get; private set; }
@@ -38,8 +38,10 @@ namespace CodeBase.ObjectBased
             resourcePool = rPool;
         }
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+
             ricochetCounter = 0;
             InitBallOnBecomeActive();
         }
@@ -78,51 +80,23 @@ namespace CodeBase.ObjectBased
             Mesh mesh = new Mesh();
             meshFilter.mesh = mesh;
 
-            Vector3[] vertices = new Vector3[numVertices];
-            Vector2[] uvs = new Vector2[numVertices];
+            Vector3[] vertices = new Vector3[vertexCount];
+            int[] triangles = new int[vertexCount * 3];
 
-            float radius = (maxRange - minRange) / 2f;
-            Vector3 center = Vector3.zero;
-
-            for (int i = 0; i < numVertices; i++)
+            for (int i = 0; i < vertexCount; i++)
             {
-                float theta = Random.Range(0f, Mathf.PI * 2f);
-                float phi = Random.Range(0f, Mathf.PI);
-
-                float x = center.x + radius * Mathf.Sin(phi) * Mathf.Cos(theta);
-                float y = center.y + radius * Mathf.Sin(phi) * Mathf.Sin(theta);
-                float z = center.z + radius * Mathf.Cos(phi);
-
-                vertices[i] = new Vector3(x, y, z);
-                uvs[i] = new Vector2(theta / (Mathf.PI * 2f), phi / Mathf.PI);
+                Vector2 randomCirclePoint = Random.insideUnitCircle * radius;
+                Vector3 randomPoint = new Vector3(randomCirclePoint.x, randomCirclePoint.y, Random.Range(-radius, radius));
+                randomPoint += Random.onUnitSphere * randomness;
+                vertices[i] = randomPoint.normalized * radius;
+                triangles[i * 3] = i;
+                triangles[i * 3 + 1] = (i + 1) % vertexCount;
+                triangles[i * 3 + 2] = (i + 2) % vertexCount;
             }
 
             mesh.vertices = vertices;
-            mesh.uv = uvs;
-
-            int[] triangles = GenerateTriangles(numVertices);
             mesh.triangles = triangles;
-
             mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-        }
-
-        private int[] GenerateTriangles(int vertexCount)
-        {
-            int triangleCount = vertexCount - 2;
-            int[] triangles = new int[triangleCount * 3];
-
-            int currentIndex = 0;
-            for (int i = 0; i < triangleCount; i++)
-            {
-                triangles[currentIndex] = 0;
-                triangles[currentIndex + 1] = i + 1;
-                triangles[currentIndex + 2] = i + 2;
-
-                currentIndex += 3;
-            }
-
-            return triangles;
         }
 
         private IEnumerator StartLifeCycle()

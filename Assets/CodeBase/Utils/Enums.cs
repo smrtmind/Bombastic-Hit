@@ -20,9 +20,30 @@ namespace Codebase.Utils
         public enum ColorType
         {
             Random,
-            Red,
-            Green,
-            Blue
+            red,
+            green,
+            blue
+        }
+
+        public enum TutorStep
+        {
+            None,
+            FirstStep,
+            SecondStep
+        }
+
+        public enum LocationType
+        {
+            Single, 
+            Double,
+            Triple
+        }
+
+        public enum UIPanelType
+        {
+            None,
+            Promo,
+            Game
         }
     }
 }
