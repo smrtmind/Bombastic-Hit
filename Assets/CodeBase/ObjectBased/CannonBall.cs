@@ -38,12 +38,22 @@ namespace CodeBase.ObjectBased
             resourcePool = rPool;
         }
 
+        private void Awake()
+        {
+            Dictionaries.CannonBalls.Add(transform, this);
+        }
+
         protected override void OnEnable()
         {
             base.OnEnable();
 
             ricochetCounter = 0;
             InitBallOnBecomeActive();
+        }
+
+        private void Start()
+        {
+            GenerateRandomVertexForm();
         }
 
         private void InitBallOnBecomeActive()
@@ -59,7 +69,6 @@ namespace CodeBase.ObjectBased
         public override void Take()
         {
             base.Take();
-            GenerateRandomVertexForm();
             gameObject.SetActive(true);
 
             lifeSpanRoutine = StartCoroutine(StartLifeCycle());

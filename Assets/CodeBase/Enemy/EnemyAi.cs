@@ -6,6 +6,7 @@ using CodeBase.UI;
 using CodeBase.Utils;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -53,7 +54,7 @@ namespace CodeBase.Enemy
 
         private void OnEnable()
         {
-            InitRandomColor();
+            RepaintEnemy(ColorType.Random);
 
             LoadingScreen.OnLoadingScreenActive += ReleaseImmidiate;
         }
@@ -63,9 +64,29 @@ namespace CodeBase.Enemy
             LoadingScreen.OnLoadingScreenActive -= ReleaseImmidiate;
         }
 
-        private void InitRandomColor()
+        private void OnCollisionEnter(Collision collision)
         {
-            ColorData randomColorData = materialStorage.GetColorData(ColorType.Random);
+            if (collision.gameObject.tag.Equals(Tags.Weapon))
+            {
+                var ball = Dictionaries.CannonBalls.FirstOrDefault(ball => ball.Key == collision.gameObject.transform);
+                if (CurrentColor == ball.Value.CurrentColor)
+                {
+                    particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.EnemyDead);
+                    playerStorage.PlayerData.ModifyScore();
+                    playerStorage.PlayerData.ModifyEnemyAmount();
+                    Die();
+                }
+                else
+                {
+                    CurrentColor = ball.Value.CurrentColor;
+                    RepaintEnemy(CurrentColor);
+                }
+            }
+        }
+
+        private void RepaintEnemy(ColorType colorType)
+        {
+            ColorData randomColorData = materialStorage.GetColorData(colorType);
 
             CurrentColor = randomColorData.Type;
 
@@ -76,17 +97,6 @@ namespace CodeBase.Enemy
                 markerCircle.color = color;
             else
                 markerCircle.color = Color.white;
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.tag.Equals(Tags.Weapon))
-            {
-                particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.EnemyDead);
-                playerStorage.PlayerData.ModifyScore();
-                playerStorage.PlayerData.ModifyEnemyAmount();
-                Die();
-            }
         }
 
         private void Die()
@@ -106,17 +116,14 @@ namespace CodeBase.Enemy
             foreach (var droppable in droppableObjects)
                 droppable.Rb.isKinematic = false;
 
-            StartCoroutine(StartTimerBeforeRespawn());
+            StartCoroutine(StartTimerBeforeRespawn(timerToRespawn));
         }
 
-        private void ReleaseImmidiate()
-        {
-            Release();
-        }
+        private void ReleaseImmidiate() => StartCoroutine(StartTimerBeforeRespawn(0f));
 
-        private IEnumerator StartTimerBeforeRespawn()
+        private IEnumerator StartTimerBeforeRespawn(float timer)
         {
-            yield return new WaitForSeconds(timerToRespawn);
+            yield return new WaitForSeconds(timer);
 
             foreach (var droppable in droppableObjects)
             {

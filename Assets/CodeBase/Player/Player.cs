@@ -58,6 +58,9 @@ namespace CodeBase.Player
             {
                 LoadingScreen.OnLevelEnded?.Invoke($"you{Environment.NewLine}lose", Color.red);
                 CurrentHealth = Health;
+                CurrentEnemyAmount = 0;
+
+                GamePanelController.OnLevelProgressChanged?.Invoke();
             }
 
             GamePanelController.OnHealthChanged?.Invoke();

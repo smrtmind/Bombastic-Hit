@@ -345,6 +345,7 @@ MonoBehaviour:
   activeDuration: 2.5
   fadeDuration: 0.5
   screenCanvasGroup: {fileID: 6263421728747372692}
+  playerStorage: {fileID: 11400000, guid: 8678643b8cf93f74c80b7d12940261d1, type: 2}
   transitionText: {fileID: 6263421730223166938}
 --- !u!225 &6263421728747372692
 CanvasGroup:
