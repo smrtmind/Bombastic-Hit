@@ -56,7 +56,7 @@ namespace CodeBase.Player
                 readyToShoot = false;
 
                 cannonAnimationTween?.Kill();
-                cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), 0.4f)
+                cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), playerStorage.PlayerData.ShootingDelay)
                     .OnComplete(() => readyToShoot = true);
 
                 cannonBurst.Play();

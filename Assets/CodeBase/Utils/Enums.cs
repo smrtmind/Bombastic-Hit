@@ -25,13 +25,6 @@ namespace Codebase.Utils
             blue
         }
 
-        public enum TutorStep
-        {
-            None,
-            FirstStep,
-            SecondStep
-        }
-
         public enum LocationType
         {
             Single, 

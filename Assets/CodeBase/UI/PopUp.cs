@@ -1,6 +1,8 @@
 using CodeBase.ObjectBased;
 using CodeBase.Player;
 using CodeBase.Service;
+using CodeBase.Utils;
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -15,16 +17,12 @@ namespace CodeBase.UI
 
         [field: Space]
         [field: SerializeField] public TextMeshProUGUI ValueInfo { get; private set; }
-
-        [Space]
-        [SerializeField] private float maxScale;
-        [SerializeField] private float scaleSpeed;
-
-        [Space]
-        [SerializeField] private float maxHeight;
-        [SerializeField] private float moveSpeed;
+        [SerializeField] private float endHeight;
+        [SerializeField] private Vector3 startScale = Vector3.zero;
+        [SerializeField] private float dissapearDuration = 1f;
 
         private Camera mainCamera;
+        private Color defaultPopUpColor;
 
         [Inject]
         private void Construct(CameraController cameraController)
@@ -32,63 +30,43 @@ namespace CodeBase.UI
             mainCamera = cameraController.MainCamera;
         }
 
+        private void Awake()
+        {
+            defaultPopUpColor = ValueInfo.color;
+        }
+
         public override void Take()
         {
             base.Take();
-
             gameObject.SetActive(true);
-            Spawn();
         }
 
         public override void Release()
         {
             base.Release();
-
-            StopAllCoroutines();
             gameObject.SetActive(false);
         }
 
-        public void Spawn()
+        public void Spawn(string text, string color)
         {
-            ValueInfo.text = $"+{playerStorage.PlayerData.ScoreOnKill}";
+            ValueInfo.color = defaultPopUpColor;
+            transform.localScale = Vector3.zero;
+            ValueInfo.text = $"<color={color}>{text}</color>";
 
-            transform.localScale = new Vector3(0f, 0f, 1f);
+            gameObject.SetActive(true);
+            StartCoroutine(SpecialCoroutine.LookAt(transform, mainCamera.transform));
 
-            StartCoroutine(LookAt(transform, mainCamera.transform));
-            StartCoroutine(StartActiveBehaviourRoutine());
+            Sequence popUpAppear = DOTween.Sequence().SetAutoKill();
+            popUpAppear.Append(transform.DOScale(startScale, 0.25f))
+                       .Append(transform.DOScale(Vector3.one, 0.25f))
+                       .OnComplete(() => FadePopUp());
         }
 
-        private IEnumerator StartActiveBehaviourRoutine()
+        private void FadePopUp()
         {
-            yield return StartCoroutine(ScalePopUp());
-            yield return StartCoroutine(MovePopUp());
-
-            Release();
-        }
-
-        private IEnumerator ScalePopUp()
-        {
-            while (transform.localScale.x < maxScale)
-            {
-                yield return transform.localScale = new Vector3(transform.localScale.x + Time.deltaTime * scaleSpeed, transform.localScale.y + Time.deltaTime * scaleSpeed, transform.localScale.z);
-            }
-        }
-
-        private IEnumerator MovePopUp()
-        {
-            while (transform.position.y < maxHeight)
-            {
-                yield return transform.position = new Vector3(transform.position.x, transform.position.y + Time.deltaTime * moveSpeed, transform.position.z);
-            }
-        }
-
-        private IEnumerator LookAt(Transform who, Transform where)
-        {
-            while (true)
-            {
-                who.LookAt(where.position);
-                yield return new WaitForEndOfFrame();
-            }
+            transform.DOMoveY(transform.position.y + endHeight, dissapearDuration).SetEase(Ease.Linear).SetAutoKill();
+            ValueInfo.DOColor(new Color(ValueInfo.color.r, ValueInfo.color.g, ValueInfo.color.b, 0f), dissapearDuration)
+                     .OnComplete(() => Release()).SetAutoKill();
         }
     }
 }

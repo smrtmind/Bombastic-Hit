@@ -1,6 +1,8 @@
 using CodeBase.Player;
+using CodeBase.Service;
 using DG.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -27,6 +29,8 @@ namespace CodeBase.UI
         [SerializeField] private Sprite fullHeart;
         [SerializeField] private Sprite brokenHeart;
         [SerializeField] private List<Image> healthHearts;
+        [SerializeField] private GameObject tutorHand;
+        [SerializeField] private float tutorHandVisibleDelay;
 
         public static Action OnScoreChanged;
         public static Action OnHealthChanged;
@@ -42,6 +46,8 @@ namespace CodeBase.UI
             OnHealthChanged += UpdateHealth;
             OnLevelChanged += UpdateLevel;
             OnLevelProgressChanged += UpdateLevelProgress;
+
+            GameManager.LevelStartAction += ShowTutor;
         }
 
         private void OnDisable()
@@ -50,6 +56,8 @@ namespace CodeBase.UI
             OnHealthChanged -= UpdateHealth;
             OnLevelChanged -= UpdateLevel;
             OnLevelProgressChanged -= UpdateLevelProgress;
+
+            GameManager.LevelStartAction -= ShowTutor;
         }
 
         private void Start()
@@ -62,6 +70,19 @@ namespace CodeBase.UI
             UpdateScore();
             UpdateLevel();
             UpdateLevelProgress();
+        }
+
+        private void ShowTutor()
+        {
+            if (!playerStorage.PlayerData.TutorialCompleted)
+                StartCoroutine(ShowTutorHand());
+        }
+
+        private IEnumerator ShowTutorHand()
+        {
+            tutorHand.SetActive(true);
+            yield return new WaitForSeconds(tutorHandVisibleDelay);
+            tutorHand.SetActive(false);
         }
 
         private void UpdateScore() => scoreValue.text = $"{playerStorage.PlayerData.Score}";

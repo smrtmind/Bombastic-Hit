@@ -14,32 +14,35 @@ namespace CodeBase.Player
         [field: SerializeField] public int CurrentHealth { get; private set; }
         [field: SerializeField] public int Score { get; private set; }
         [field: SerializeField] public float ShootingPower { get; private set; }
+        [field: SerializeField] public float ShootingDelay { get; private set; }
 
         [field: Header("World Settings")]
         [field: SerializeField] public bool TutorialCompleted { get; private set; }
-        [field: SerializeField] public TutorStep CurrentTutorialStep { get; private set; }
         [field: SerializeField] public LocationType CurrentLocationType { get; private set; }
         [field: SerializeField] public int ScoreOnKill { get; private set; }
         [field: SerializeField] public int EnemyDamage { get; private set; }
         [field: SerializeField] public int EnemyAmount { get; private set; }
         [field: SerializeField] public int CurrentEnemyAmount { get; private set; }
         [field: SerializeField] public int EnemyAmountStepPerLevel { get; private set; }
+        [field: SerializeField] public float EnemySpawnDelay { get; private set; }
 
-        public void SetPlayerData(int level, int health, int score, float shootingPower, bool tutorialCompleted, int scoreOnKill, int enemyDamage, int baseEnemyAmount, int enemyAmountStepPerLevel)
+        public void SetPlayerData(int level, int health, int score, float shootingPower, float shootingDelay, bool tutorialCompleted, int scoreOnKill, int enemyDamage, int baseEnemyAmount, int enemyAmountStepPerLevel, float enemySpawnDelay)
         {
             Level = level;
             Health = health;
             Score = score;
             ShootingPower = shootingPower;
+            ShootingDelay = shootingDelay;
             TutorialCompleted = tutorialCompleted;
             ScoreOnKill = scoreOnKill;
             EnemyDamage = enemyDamage;
             EnemyAmount = baseEnemyAmount;
             EnemyAmountStepPerLevel = enemyAmountStepPerLevel;
+            EnemySpawnDelay = enemySpawnDelay;
+
             CurrentLocationType = LocationType.Single;
 
             CurrentHealth = health;
-            CurrentTutorialStep = TutorialCompleted ? TutorStep.None : TutorStep.FirstStep;
         }
 
         public void ModifyScore()
@@ -81,6 +84,8 @@ namespace CodeBase.Player
                 {
                     case 1:
                     case 2:
+                        TutorialCompleted = true;
+
                         EnemyAmount *= 2;
                         CurrentLocationType = LocationType.Double;
                         break;

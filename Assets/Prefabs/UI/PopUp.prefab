@@ -28,6 +28,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5633479742601799100}
   m_RootOrder: 0
@@ -161,6 +162,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5633479742601799100}
   m_Father: {fileID: 0}
@@ -181,10 +183,9 @@ MonoBehaviour:
   <ResourceType>k__BackingField: 3
   playerStorage: {fileID: 11400000, guid: 8678643b8cf93f74c80b7d12940261d1, type: 2}
   <ValueInfo>k__BackingField: {fileID: 5633479741038275320}
-  maxScale: 1
-  scaleSpeed: 3
-  maxHeight: 5
-  moveSpeed: 6
+  endHeight: 8
+  startScale: {x: 2, y: 2, z: 1}
+  dissapearDuration: 0.5
 --- !u!1 &5633479742601799103
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,6 +215,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5633479741038275323}
   m_Father: {fileID: 5633479741604867484}

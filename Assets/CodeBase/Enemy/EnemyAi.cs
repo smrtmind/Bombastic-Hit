@@ -31,6 +31,7 @@ namespace CodeBase.Enemy
         [SerializeField] private MeshRenderer[] clothMeshes;
         [SerializeField] private Collider mainCollider;
         [SerializeField] private Image markerCircle;
+        [SerializeField] private TutorialInfo tutorialInfo;
 
         [Header("Enemy Parts")]
         [SerializeField] private GameObject body;
@@ -56,11 +57,17 @@ namespace CodeBase.Enemy
         {
             RepaintEnemy(ColorType.Random);
 
+            if (!playerStorage.PlayerData.TutorialCompleted)
+                tutorialInfo.gameObject.SetActive(true);
+
             LoadingScreen.OnLoadingScreenActive += ReleaseImmidiate;
         }
 
         private void OnDisable()
         {
+            if (tutorialInfo.gameObject.activeSelf)
+                tutorialInfo.gameObject.SetActive(false);
+
             LoadingScreen.OnLoadingScreenActive -= ReleaseImmidiate;
         }
 
@@ -94,9 +101,10 @@ namespace CodeBase.Enemy
                 mesh.material = randomColorData.Material;
 
             if (ColorUtility.TryParseHtmlString(CurrentColor.ToString(), out Color color))
+            {
                 markerCircle.color = color;
-            else
-                markerCircle.color = Color.white;
+                tutorialInfo.SetText($"need <color={CurrentColor}>{CurrentColor}</color> ball");
+            }
         }
 
         private void Die()
@@ -116,6 +124,9 @@ namespace CodeBase.Enemy
             foreach (var droppable in droppableObjects)
                 droppable.Rb.isKinematic = false;
 
+            if (tutorialInfo.gameObject.activeSelf)
+                tutorialInfo.gameObject.SetActive(false);
+
             StartCoroutine(StartTimerBeforeRespawn(timerToRespawn));
         }
 
@@ -133,7 +144,6 @@ namespace CodeBase.Enemy
             }
 
             mainCollider.enabled = true;
-            agent.enabled = true;
             Release();
         }
 
@@ -145,12 +155,14 @@ namespace CodeBase.Enemy
                 body.SetActive(true);
 
             gameObject.SetActive(true);
+            agent.enabled = true;
             playerFollowRoutine = StartCoroutine(MoveToCurrentDestination());
         }
 
         public void Release()
         {
             IsBusy = false;
+            agent.enabled = false;
             gameObject.SetActive(false);
         }
 
@@ -178,11 +190,12 @@ namespace CodeBase.Enemy
         private void SpawnPopUp()
         {
             var newPopUp = resourcePool.GetFreeResource(ResourceType.PopUp);
-            if (newPopUp != null)
+            if (newPopUp != null && newPopUp is PopUp popUp)
             {
-                newPopUp.Take();
-                newPopUp.transform.position = transform.position;
-                newPopUp.transform.rotation = Quaternion.identity;
+                popUp.Take();
+                popUp.transform.position = transform.position;
+                popUp.transform.rotation = Quaternion.identity;
+                popUp.Spawn($"+{playerStorage.PlayerData.ScoreOnKill}", "yellow");
             }
         }
 

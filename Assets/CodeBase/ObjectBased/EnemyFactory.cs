@@ -15,7 +15,6 @@ namespace CodeBase.ObjectBased
         [SerializeField] private PlayerStorage playerStorage;
 
         [Header("Factory Settings")]
-        [SerializeField] private float spawnDelay;
         [SerializeField] private EnemyAi enemyPrefab;
         [SerializeField] private Transform enemyContainer;
 
@@ -60,7 +59,7 @@ namespace CodeBase.ObjectBased
             while (true)
             {
                 SpawnNewEnemy();
-                yield return new WaitForSeconds(spawnDelay);
+                yield return new WaitForSeconds(playerStorage.PlayerData.EnemySpawnDelay);
             }
         }
 
@@ -69,7 +68,10 @@ namespace CodeBase.ObjectBased
             EnemyAi newEnemy = GetFreeEnemy();
             if (newEnemy != null)
             {
-                newEnemy.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
+                Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)].transform;
+
+                newEnemy.transform.position = randomSpawnPoint.position;
+                newEnemy.transform.rotation = randomSpawnPoint.rotation;
                 newEnemy.Take();
             }
         }

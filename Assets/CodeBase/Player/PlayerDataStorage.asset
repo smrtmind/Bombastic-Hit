@@ -16,8 +16,10 @@ MonoBehaviour:
   <Health>k__BackingField: 3
   <Score>k__BackingField: 0
   <ShootingPower>k__BackingField: 28
-  <TutorialCompleted>k__BackingField: 1
+  <ShootingDelay>k__BackingField: 0.5
+  <TutorialCompleted>k__BackingField: 0
   <ScoreOnKill>k__BackingField: 15
   <EnemyDamage>k__BackingField: 1
   <BaseEnemyAmount>k__BackingField: 5
   <EnemyAmountStepPerLevel>k__BackingField: 2
+  <EnemySpawnDelay>k__BackingField: 2

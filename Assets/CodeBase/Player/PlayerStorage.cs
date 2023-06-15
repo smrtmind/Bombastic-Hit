@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CodeBase.Player
@@ -44,7 +43,6 @@ namespace CodeBase.Player
             Debug.Log("NEW GAME");
             playerData = new Player();
             InitPlayer();
-            //InitUpgrades();
         }
 
         private void InitPlayer()
@@ -53,29 +51,13 @@ namespace CodeBase.Player
                                      playerDataStorage.Health,
                                      playerDataStorage.Score,
                                      playerDataStorage.ShootingPower,
+                                     playerDataStorage.ShootingDelay,
                                      playerDataStorage.TutorialCompleted,
                                      playerDataStorage.ScoreOnKill,
                                      playerDataStorage.EnemyDamage,
                                      playerDataStorage.BaseEnemyAmount,
-                                     playerDataStorage.EnemyAmountStepPerLevel);
+                                     playerDataStorage.EnemyAmountStepPerLevel,
+                                     playerDataStorage.EnemySpawnDelay);
         }
-
-        //private void InitUpgrades()
-        //{
-        //    List<ObjectType> objectTypes = new List<ObjectType>();
-        //    foreach (var data in playerDataStorage.UpgradesDatas)
-        //    {
-        //        objectTypes.Add(data.ObjectType);
-        //    }
-
-        //    for (int i = 0; i < objectTypes.Count; i++)
-        //    {
-        //        var tech = playerDataStorage.GetUpgradeData(objectTypes[i]);
-        //        Technology newTech = new Technology(tech.ObjectType,
-        //                                            tech.ObjectCost);
-
-        //        playerData.ObjectsDatas.Add(newTech);
-        //    }
-        //}
     }
 }
