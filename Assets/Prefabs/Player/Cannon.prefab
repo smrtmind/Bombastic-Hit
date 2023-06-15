@@ -710,9 +710,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerStorage: {fileID: 11400000, guid: 8678643b8cf93f74c80b7d12940261d1, type: 2}
   cannon: {fileID: 8640846527046428954}
-  tapThreshold: 5
   <ShotPoint>k__BackingField: {fileID: 5768215504587474371}
   cannonBurst: {fileID: 2165058224308330136}
+  indicatorPrefab: {fileID: 3282293174735890963, guid: cacaebb499aeb5347bf0953b1ab52a37, type: 3}
 --- !u!114 &288830062512683188
 MonoBehaviour:
   m_ObjectHideFlags: 0

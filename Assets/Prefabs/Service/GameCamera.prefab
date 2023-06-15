@@ -160,5 +160,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b52220d92a18eb64bb60a8b3ee02a290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fontSize: 32
+  fontSize: 48
   fontColor: {r: 0, g: 1, b: 0.062031746, a: 1}
