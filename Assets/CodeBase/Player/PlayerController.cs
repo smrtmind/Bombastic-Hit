@@ -12,64 +12,131 @@ namespace CodeBase.Player
         #region Variables
         [Header("Storages")]
         [SerializeField] private PlayerStorage playerStorage;
+        [SerializeField] private MaterialStorage materialStorage;
 
         [Header("Cannon Settings")]
         [SerializeField] private Transform cannon;
         [field: SerializeField] public Transform ShotPoint { get; private set; }
         [SerializeField] private ParticleSystem cannonBurst;
+        [SerializeField] private SpriteRenderer groundMarkerRenderer;
+        [SerializeField] private GameObject aim;
 
         private bool readyToShoot = true;
         private ResourcePool resourcePool;
         private Tween cannonAnimationTween;
+        private Camera mainCamera;
+        private Vector3 cannonDefaultRotation;
+        private bool isAiming;
+        private bool colorIsGenerated;
+        private ColorData randomColorData;
         #endregion
 
         [Inject]
-        private void Construct(ResourcePool rPool)
+        private void Construct(ResourcePool rPool, CameraController cameraController)
         {
             resourcePool = rPool;
+            mainCamera = cameraController.MainCamera;
+        }
+
+        private void Start()
+        {
+            cannonDefaultRotation = cannon.localEulerAngles;
         }
 
         private void Update()
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
-                MoveCannon();
+                isAiming = true;
+                aim.SetActive(true);
+
+                if (!colorIsGenerated)
+                {
+                    colorIsGenerated = true;
+                    GenerateBallColor();
+                }
+            }
+            else if (Input.GetMouseButtonUp(0) && readyToShoot)
+            {
+                readyToShoot = false;
+                isAiming = false;
+                aim.SetActive(false);
                 ShootCannonball();
+            }
+
+            if (isAiming)
+                AimCannon();
+        }
+
+        private void GenerateBallColor()
+        {
+            randomColorData = materialStorage.GetColorData(ColorType.Random);
+
+            if (ColorUtility.TryParseHtmlString(randomColorData.Type.ToString(), out Color color))
+            {
+                groundMarkerRenderer.color = color;
+                groundMarkerRenderer.gameObject.SetActive(true);
             }
         }
 
-        private void MoveCannon()
+        private void AimCannon()
         {
-            float deltaX = Input.GetAxis("Mouse X");
-            float deltaY = Input.GetAxis("Mouse Y");
+            Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
-            float mouseRotationSpeed = 1f;
+            if (groundPlane.Raycast(mouseRay, out float rayDistance))
+            {
+                Vector3 targetPoint = mouseRay.GetPoint(rayDistance);
+                targetPoint.y = ShotPoint.position.y;
 
-            transform.rotation *= Quaternion.Euler(new Vector3(0f * mouseRotationSpeed, deltaX * mouseRotationSpeed, 0f));
-            cannon.rotation *= Quaternion.Euler(new Vector3(0f * mouseRotationSpeed, 0f, deltaY * mouseRotationSpeed));
+                aim.transform.position = targetPoint;
+            }
         }
 
         private void ShootCannonball()
         {
-            if (readyToShoot)
+            cannonAnimationTween?.Kill();
+            cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), 0.1f)
+                .OnComplete(() => readyToShoot = true);
+
+            cannonBurst.Play();
+
+            Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
+            if (groundPlane.Raycast(mouseRay, out float rayDistance))
             {
-                readyToShoot = false;
+                Vector3 targetPoint = mouseRay.GetPoint(rayDistance);
+                targetPoint.y = ShotPoint.position.y;
 
-                cannonAnimationTween?.Kill();
-                cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), playerStorage.PlayerData.ShootingDelay)
-                    .OnComplete(() => readyToShoot = true);
-
-                cannonBurst.Play();
-                //CameraShaker.OnShakeCamera?.Invoke();
+                Vector3 initialVelocity = CalculateProjectileVelocity(ShotPoint.position, targetPoint, playerStorage.PlayerData.ShootingPower);
+                Quaternion launchRotation = Quaternion.LookRotation(initialVelocity);
 
                 var newCannonBall = resourcePool.GetFreeResource(ResourceType.Ammo);
                 if (newCannonBall != null && newCannonBall is CannonBall ball)
                 {
                     ball.transform.position = ShotPoint.position;
                     ball.Take();
-                    ball.Throw(ShotPoint.transform.up * playerStorage.PlayerData.ShootingPower);
+                    ball.RepaintCannonBall(randomColorData);
+                    ball.Throw(initialVelocity);
                 }
+
+                cannon.rotation = Quaternion.Euler(cannonDefaultRotation);
+                cannon.Rotate(launchRotation.eulerAngles, Space.Self);
+
+                groundMarkerRenderer.gameObject.SetActive(false);
+                colorIsGenerated = false;
             }
+        }
+
+        private Vector3 CalculateProjectileVelocity(Vector3 origin, Vector3 target, float launchSpeed)
+        {
+            Vector3 displacement = target - origin;
+            float time = displacement.magnitude / launchSpeed;
+            Vector3 velocity = displacement / time;
+            velocity.y += Mathf.Abs(Physics.gravity.y) * time * 0.5f;
+
+            return velocity;
         }
     }
 }

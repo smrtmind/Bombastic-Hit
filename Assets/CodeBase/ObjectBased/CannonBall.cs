@@ -60,10 +60,12 @@ namespace CodeBase.ObjectBased
         {
             Rb.velocity = Vector3.zero;
             Rb.angularVelocity = Vector3.zero;
+        }
 
-            ColorData randomColorData = materialStorage.GetColorData(ColorType.Random);
-            meshRenderer.material = randomColorData.Material;
-            CurrentColor = randomColorData.Type;
+        public void RepaintCannonBall(ColorData colorData)
+        {
+            meshRenderer.material = colorData.Material;
+            CurrentColor = colorData.Type;
         }
 
         public override void Take()

@@ -1,4 +1,6 @@
+using CodeBase.Service;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -23,11 +25,19 @@ namespace CodeBase.UI
 
         protected void ShowScreen(string text, Color color)
         {
+            StartCoroutine(StartTransitionVibration());
+
             base.ShowScreen();
             transitionText.text = text;
             transitionText.color = color;
 
             OnLoadingScreenActive?.Invoke();
+        }
+
+        private IEnumerator StartTransitionVibration()
+        {
+            yield return new WaitForSeconds(0.5f);
+            VibrationController.Vibrate(500);
         }
     }
 }
