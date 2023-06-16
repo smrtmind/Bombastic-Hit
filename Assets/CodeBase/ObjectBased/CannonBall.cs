@@ -82,8 +82,6 @@ namespace CodeBase.ObjectBased
             gameObject.SetActive(false);
 
             StopCoroutine(lifeSpanRoutine);
-
-            particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.Explosion);
         }
 
         private void GenerateRandomVertexForm()
@@ -119,6 +117,7 @@ namespace CodeBase.ObjectBased
                 yield return currentLifeSpan -= Time.deltaTime;
             }
 
+            particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.Explosion);
             Release();
         }
 
@@ -138,6 +137,7 @@ namespace CodeBase.ObjectBased
                 if (ricochetCounter == maxRicochets)
                 {
                     SpawnMark(contact.point, contact.normal, ResourceType.WallDamage);
+                    particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.Explosion);
                     Release();
                 }
                 else

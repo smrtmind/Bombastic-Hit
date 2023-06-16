@@ -1,4 +1,5 @@
-﻿using CodeBase.ObjectBased;
+﻿using CodeBase.Effects;
+using CodeBase.ObjectBased;
 using CodeBase.Service;
 using DG.Tweening;
 using UnityEngine;
@@ -17,9 +18,8 @@ namespace CodeBase.Player
         [Header("Cannon Settings")]
         [SerializeField] private Transform cannon;
         [field: SerializeField] public Transform ShotPoint { get; private set; }
-        [SerializeField] private ParticleSystem cannonBurst;
         [SerializeField] private SpriteRenderer groundMarkerRenderer;
-        [SerializeField] private GameObject aim;
+        [SerializeField] private SpriteRenderer aimRenderer;
 
         private bool readyToShoot = true;
         private ResourcePool resourcePool;
@@ -29,13 +29,15 @@ namespace CodeBase.Player
         private bool isAiming;
         private bool colorIsGenerated;
         private ColorData randomColorData;
+        private ParticlePool particlePool;
         #endregion
 
         [Inject]
-        private void Construct(ResourcePool rPool, CameraController cameraController)
+        private void Construct(ResourcePool rPool, CameraController cameraController, ParticlePool pPool)
         {
             resourcePool = rPool;
             mainCamera = cameraController.MainCamera;
+            particlePool = pPool;
         }
 
         private void Start()
@@ -48,7 +50,7 @@ namespace CodeBase.Player
             if (Input.GetMouseButtonDown(0))
             {
                 isAiming = true;
-                aim.SetActive(true);
+                aimRenderer.gameObject.SetActive(true);
 
                 if (!colorIsGenerated)
                 {
@@ -60,7 +62,7 @@ namespace CodeBase.Player
             {
                 readyToShoot = false;
                 isAiming = false;
-                aim.SetActive(false);
+                aimRenderer.gameObject.SetActive(false);
                 ShootCannonball();
             }
 
@@ -76,6 +78,9 @@ namespace CodeBase.Player
             {
                 groundMarkerRenderer.color = color;
                 groundMarkerRenderer.gameObject.SetActive(true);
+
+                aimRenderer.color = color;
+                aimRenderer.gameObject.SetActive(true);
             }
         }
 
@@ -89,7 +94,7 @@ namespace CodeBase.Player
                 Vector3 targetPoint = mouseRay.GetPoint(rayDistance);
                 targetPoint.y = ShotPoint.position.y;
 
-                aim.transform.position = targetPoint;
+                aimRenderer.gameObject.transform.position = targetPoint;
             }
         }
 
@@ -99,7 +104,7 @@ namespace CodeBase.Player
             cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), 0.1f)
                 .OnComplete(() => readyToShoot = true);
 
-            cannonBurst.Play();
+            particlePool.PlayParticleAction?.Invoke(ShotPoint.position, ParticleType.SmokePuff);
 
             Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
             Plane groundPlane = new Plane(Vector3.up, Vector3.zero);

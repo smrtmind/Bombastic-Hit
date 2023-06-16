@@ -81,11 +81,15 @@ namespace CodeBase.Enemy
                     playerStorage.PlayerData.ModifyScore();
                     playerStorage.PlayerData.ModifyEnemyAmount();
                     Die();
+
+                    particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.Explosion);
                 }
                 else
                 {
                     CurrentColor = ball.Value.CurrentColor;
                     RepaintEnemy(CurrentColor);
+
+                    particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.ColorExplosion);
                 }
 
                 VibrationController.Vibrate(30);
@@ -183,6 +187,7 @@ namespace CodeBase.Enemy
                         DamageScreen.OnPlayerDamaged?.Invoke();
                         Release();
 
+                        particlePool.PlayParticleAction?.Invoke(Vector3.zero, ParticleType.BrokenHeart);
                         VibrationController.Vibrate(150);
                         break;
                     }

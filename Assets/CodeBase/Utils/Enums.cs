@@ -5,8 +5,11 @@ namespace Codebase.Utils
         public enum ParticleType
         {
             None,
+            EnemyDead,
             Explosion,
-            EnemyDead
+            SmokePuff,
+            ColorExplosion,
+            BrokenHeart
         }
 
         public enum ResourceType
