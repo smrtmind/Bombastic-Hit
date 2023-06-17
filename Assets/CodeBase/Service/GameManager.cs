@@ -23,10 +23,7 @@ namespace CodeBase.Service
         {
             GameStartAction?.Invoke();
 
-#if UNITY_EDITOR
-            if (!UnityEditor.EditorApplication.isPlaying)
-                Application.targetFrameRate = 60;
-#endif
+            Application.targetFrameRate = 60;
         }
 
         private void Awake()

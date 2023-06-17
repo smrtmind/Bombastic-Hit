@@ -48,7 +48,7 @@ namespace CodeBase.Service
         public static void Vibrate(long[] pattern, int repeat)
         {
 #if !UNITY_EDITOR
-		if (CanVibration)
+		if (CanVibrate)
 		{
 			if (isAndroid())
 				vibrator.Call("vibrate", pattern, repeat);
