@@ -20,16 +20,20 @@ namespace CodeBase.Player
         [field: SerializeField] public Transform ShotPoint { get; private set; }
         [SerializeField] private SpriteRenderer groundMarkerRenderer;
         [SerializeField] private SpriteRenderer aimRenderer;
+        [SerializeField] private Transform aimTransform;
 
         private bool readyToShoot = true;
         private ResourcePool resourcePool;
         private Tween cannonAnimationTween;
         private Camera mainCamera;
-        private Vector3 cannonDefaultRotation;
         private bool isAiming;
         private bool colorIsGenerated;
         private ColorData randomColorData;
         private ParticlePool particlePool;
+        private Ray mouseRay;
+        private float rayDistance;
+        private Plane groundPlane;
+        private Vector3 targetPoint;
         #endregion
 
         [Inject]
@@ -42,7 +46,7 @@ namespace CodeBase.Player
 
         private void Start()
         {
-            cannonDefaultRotation = cannon.localEulerAngles;
+            aimTransform.SetParent(resourcePool.transform);
         }
 
         private void Update()
@@ -86,52 +90,40 @@ namespace CodeBase.Player
 
         private void AimCannon()
         {
-            Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+            groundPlane = new Plane(Vector3.up, Vector3.zero);
 
-            if (groundPlane.Raycast(mouseRay, out float rayDistance))
+            if (groundPlane.Raycast(mouseRay, out rayDistance))
             {
-                Vector3 targetPoint = mouseRay.GetPoint(rayDistance);
-                targetPoint.y = ShotPoint.position.y;
+                targetPoint = mouseRay.GetPoint(rayDistance);
+                targetPoint.y = transform.position.y;
 
                 aimRenderer.gameObject.transform.position = targetPoint;
+
+                Vector3 direction = targetPoint - transform.position;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = lookRotation * Quaternion.Euler(0f, -90f, 0f);
             }
         }
 
         private void ShootCannonball()
         {
-            cannonAnimationTween?.Kill();
-            cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), 0.1f)
-                .OnComplete(() => readyToShoot = true);
+            ShowVfx();
 
-            particlePool.PlayParticleAction?.Invoke(ShotPoint.position, ParticleType.SmokePuff);
+            targetPoint.y = ShotPoint.position.y;
+            Vector3 initialVelocity = CalculateProjectileVelocity(ShotPoint.position, targetPoint, playerStorage.PlayerData.ShootingPower);
 
-            Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
-            if (groundPlane.Raycast(mouseRay, out float rayDistance))
+            var newCannonBall = resourcePool.GetFreeResource(ResourceType.Ammo);
+            if (newCannonBall != null && newCannonBall is CannonBall ball)
             {
-                Vector3 targetPoint = mouseRay.GetPoint(rayDistance);
-                targetPoint.y = ShotPoint.position.y;
-
-                Vector3 initialVelocity = CalculateProjectileVelocity(ShotPoint.position, targetPoint, playerStorage.PlayerData.ShootingPower);
-                Quaternion launchRotation = Quaternion.LookRotation(initialVelocity);
-
-                var newCannonBall = resourcePool.GetFreeResource(ResourceType.Ammo);
-                if (newCannonBall != null && newCannonBall is CannonBall ball)
-                {
-                    ball.transform.position = ShotPoint.position;
-                    ball.Take();
-                    ball.RepaintCannonBall(randomColorData);
-                    ball.Throw(initialVelocity);
-                }
-
-                cannon.rotation = Quaternion.Euler(cannonDefaultRotation);
-                cannon.Rotate(launchRotation.eulerAngles, Space.Self);
-
-                groundMarkerRenderer.gameObject.SetActive(false);
-                colorIsGenerated = false;
+                ball.transform.position = ShotPoint.position;
+                ball.Take();
+                ball.RepaintCannonBall(randomColorData);
+                ball.Throw(initialVelocity);
             }
+
+            groundMarkerRenderer.gameObject.SetActive(false);
+            colorIsGenerated = false;
         }
 
         private Vector3 CalculateProjectileVelocity(Vector3 origin, Vector3 target, float launchSpeed)
@@ -142,6 +134,15 @@ namespace CodeBase.Player
             velocity.y += Mathf.Abs(Physics.gravity.y) * time * 0.5f;
 
             return velocity;
+        }
+
+        private void ShowVfx()
+        {
+            cannonAnimationTween?.Kill();
+            cannonAnimationTween = cannon.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0.25f), 0.1f)
+                .OnComplete(() => readyToShoot = true);
+
+            particlePool.PlayParticleAction?.Invoke(ShotPoint.position, ParticleType.SmokePuff);
         }
     }
 }

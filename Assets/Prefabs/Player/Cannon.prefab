@@ -617,6 +617,7 @@ MonoBehaviour:
   <ShotPoint>k__BackingField: {fileID: 5768215504587474371}
   groundMarkerRenderer: {fileID: 2124690645092070144}
   aimRenderer: {fileID: 1395976294195541783}
+  aimTransform: {fileID: 5600972428783102004}
 --- !u!114 &288830062512683188
 MonoBehaviour:
   m_ObjectHideFlags: 0
