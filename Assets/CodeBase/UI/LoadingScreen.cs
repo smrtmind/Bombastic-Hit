@@ -1,4 +1,5 @@
 using CodeBase.Service;
+using Lofelt.NiceVibrations;
 using System;
 using System.Collections;
 using TMPro;
@@ -37,7 +38,7 @@ namespace CodeBase.UI
         private IEnumerator StartTransitionVibration()
         {
             yield return new WaitForSeconds(0.5f);
-            VibrationController.Vibrate(500);
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
         }
     }
 }

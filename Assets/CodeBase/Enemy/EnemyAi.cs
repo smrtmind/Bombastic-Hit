@@ -4,9 +4,9 @@ using CodeBase.Player;
 using CodeBase.Service;
 using CodeBase.UI;
 using CodeBase.Utils;
+using Lofelt.NiceVibrations;
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
@@ -72,10 +72,9 @@ namespace CodeBase.Enemy
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.tag.Equals(Tags.Weapon))
+            if (collision.gameObject.TryGetComponent(out CannonBall ball))
             {
-                var ball = Dictionaries.CannonBalls.FirstOrDefault(ball => ball.Key == collision.gameObject.transform);
-                if (CurrentColor == ball.Value.CurrentColor)
+                if (CurrentColor == ball.CurrentColor)
                 {
                     particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.EnemyDead);
                     playerStorage.PlayerData.ModifyScore();
@@ -86,13 +85,13 @@ namespace CodeBase.Enemy
                 }
                 else
                 {
-                    CurrentColor = ball.Value.CurrentColor;
+                    CurrentColor = ball.CurrentColor;
                     RepaintEnemy(CurrentColor);
 
                     particlePool.PlayParticleAction?.Invoke(transform.position, ParticleType.ColorExplosion);
                 }
 
-                VibrationController.Vibrate(30);
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
             }
         }
 
@@ -188,7 +187,7 @@ namespace CodeBase.Enemy
                         Release();
 
                         particlePool.PlayParticleAction?.Invoke(Vector3.zero, ParticleType.BrokenHeart);
-                        VibrationController.Vibrate(150);
+                        HapticPatterns.PlayPreset(HapticPatterns.PresetType.LightImpact);
                         break;
                     }
                 }

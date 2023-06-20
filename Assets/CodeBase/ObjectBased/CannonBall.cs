@@ -38,11 +38,6 @@ namespace CodeBase.ObjectBased
             resourcePool = rPool;
         }
 
-        private void Awake()
-        {
-            Dictionaries.CannonBalls.Add(transform, this);
-        }
-
         protected override void OnEnable()
         {
             base.OnEnable();

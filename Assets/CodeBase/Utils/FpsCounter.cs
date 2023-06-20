@@ -1,33 +1,37 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 
 namespace CodeBase.Utils
 {
     public class FpsCounter : MonoBehaviour
     {
-        [SerializeField] private int fontSize = 20;
-        [SerializeField] private Color fontColor = Color.white;
+        [SerializeField] private TextMeshProUGUI fpsValue;
+        [SerializeField] private Color fpsColor;
+        [SerializeField] private float fpsRefreshRate = 0.5f;
 
-        private GUIStyle style;
-        private Rect position;
+        private float deltaTime = 0.0f;
 
         private void Start()
         {
-            style = new GUIStyle();
-            style.fontSize = fontSize;
-            style.normal.textColor = fontColor;
-
-            position = new Rect(10, 10, 100, 20);
+            fpsValue.color = fpsColor;
+            StartCoroutine(RefreshFPSCounter());
         }
 
-        private void OnGUI()
+        private IEnumerator RefreshFPSCounter()
         {
-#if UNITY_EDITOR
-            if (!UnityEditor.EditorApplication.isPlaying)
-                return;
-#endif
+            while (true)
+            {
+                yield return new WaitForSeconds(fpsRefreshRate);
 
-            float fps = 1.0f / Time.deltaTime;
-            GUI.Label(position, "FPS: " + fps.ToString("F1"), style);
+                float fps = 1.0f / deltaTime;
+                fpsValue.text = $"fps: {Mathf.Round(fps)}";
+            }
+        }
+
+        private void Update()
+        {
+            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
         }
     }
 }

@@ -91,7 +91,6 @@ namespace CodeBase.Player
                         break;
 
                     default:
-                        EnemyAmount *= 2;
                         EnemyAmount += EnemyAmountStepPerLevel;
                         CurrentLocationType = LocationType.Triple;
                         break;
